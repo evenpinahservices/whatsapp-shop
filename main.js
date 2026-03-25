@@ -114,9 +114,12 @@ function closeModal() {
 }
 
 // --- CLOUDINARY WIDGET ---
+const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'demo';
+const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
+
 const widget = cloudinary.createUploadWidget({
-    cloudName: 'demo', // USER MUST UPDATE THIS
-    uploadPreset: 'ml_default' // USER MUST UPDATE THIS
+    cloudName: cloudName,
+    uploadPreset: uploadPreset
 }, (error, result) => {
     if (!error && result && result.event === "success") {
         currentCloudinaryUrl = result.info.secure_url;
