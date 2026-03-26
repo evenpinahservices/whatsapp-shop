@@ -4,9 +4,7 @@ export default async function handler(req, res) {
     try {
         const { blobs } = await list({ prefix: 'products.json' });
         const products = blobs.length > 0
-            ? await fetch(blobs[0].url, {
-                headers: { authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
-              }).then(r => r.json())
+            ? await fetch(blobs[0].url).then(r => r.json())
             : [];
 
         const headers = [
