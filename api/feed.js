@@ -1,32 +1,15 @@
-import { kv } from '@vercel/kv';
+import fs from 'fs';
+import path from 'path';
 
 export default async function handler(req, res) {
     try {
-        const products = await kv.get('products') || [];
-        
-        // Define CSV headers (consistent with FB specs)
-        const headers = [
-            'id', 'title', 'description', 'availability', 'condition', 
-            'price', 'link', 'image_link', 'brand'
-        ];
+        const csvPath = path.join(process.cwd(), 'public', 'facebook_catalog.csv');
 
-        // Format products to CSV rows
-        const rows = products.map(p => {
-            return headers.map(header => {
-                let val = p[header] || '';
-                
-                // Special handling for price to ensure ILS suffix
-                if (header === 'price' && val && !val.toString().includes('ILS')) {
-                    val = `${parseFloat(val).toFixed(2)} ILS`;
-                }
+        if (!fs.existsSync(csvPath)) {
+            return res.status(404).send('Catalog not found');
+        }
 
-                // Escape quotes and wrap in quotes
-                val = val.toString().replace(/"/g, '""');
-                return `"${val}"`;
-            }).join(',');
-        });
-
-        const csvContent = [headers.join(','), ...rows].join('\n');
+        const csvContent = fs.readFileSync(csvPath, 'utf8');
 
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Access-Control-Allow-Origin', '*');
