@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { put } from '@vercel/blob';
 import fs from 'fs';
 import path from 'path';
 
@@ -48,12 +48,15 @@ export default async function handler(req, res) {
             return product;
         });
 
-        // Store in KV
-        await kv.set('products', products);
+        await put('products.json', JSON.stringify(products), {
+            access: 'public',
+            addRandomSuffix: false,
+            allowOverwrite: true
+        });
 
-        return res.status(200).json({ 
-            success: true, 
-            message: `Synced ${products.length} products to KV.`,
+        return res.status(200).json({
+            success: true,
+            message: `Synced ${products.length} products to Blob.`,
             sample: products[0]
         });
     } catch (err) {
