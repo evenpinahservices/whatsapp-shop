@@ -22,7 +22,11 @@ export default async function handler(req, res) {
         switch (method) {
             case 'GET': {
                 const products = await getProducts();
-                return res.status(200).json(products);
+                const cleaned = products.map(p => ({
+                    ...p,
+                    image_link: (p.image_link || '').replace(/-\d+x\d+(\.\w+)$/, '$1')
+                }));
+                return res.status(200).json(cleaned);
             }
             case 'POST': {
                 const products = await getProducts();
