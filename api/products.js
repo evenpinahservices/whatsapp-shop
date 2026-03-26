@@ -3,7 +3,7 @@ import { put, list } from '@vercel/blob';
 async function getProducts() {
     const { blobs } = await list({ prefix: 'products.json' });
     if (blobs.length === 0) return [];
-    const res = await fetch(blobs[0].url);
+    const res = await fetch(blobs[0].url, { cache: 'no-store' });
     return res.json();
 }
 
