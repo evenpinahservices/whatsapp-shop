@@ -74,9 +74,6 @@ export default async function handler(req, res) {
             const productType = getProductType(p.image_link || '');
             return headers.map(header => {
                 let val = header === 'product_type' ? productType : (p[header] || '');
-                if (header === 'image_link') {
-                    val = val.toString().replace(/-\d+x\d+(\.\w+)$/, '$1');
-                }
                 if (header === 'price' && val && !val.toString().includes('ILS')) {
                     val = `${parseFloat(val).toFixed(2)} ILS`;
                 }
