@@ -130,18 +130,32 @@ const widget = cloudinary.createUploadWidget({
 
 // --- EVENT LISTENERS ---
 function setupEventListeners() {
+    const SYNC_BTN = document.getElementById('sync-btn');
+    SYNC_BTN.addEventListener('click', async () => {
+        if (!confirm('This will overwrite current KV data with the contents of public/facebook_catalog.csv. Proceed?')) return;
+        SYNC_BTN.disabled = true;
+        SYNC_BTN.textContent = 'Syncing...';
+        try {
+            const res = await fetch('/api/sync');
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                await fetchProducts();
+            } else {
+                alert('Sync failed: ' + data.error);
+            }
+        } catch (err) {
+            alert('Error syncing: ' + err.message);
+        } finally {
+            SYNC_BTN.disabled = false;
+            SYNC_BTN.textContent = 'Sync from CSV';
+        }
+    });
+
     ADD_BTN.addEventListener('click', openAddModal);
     CANCEL_BTN.addEventListener('click', closeModal);
     CLOSE_BTN.addEventListener('click', closeModal);
     UPLOAD_BTN.addEventListener('click', () => widget.open());
-
-    // Add Feed Download Link in Header
-    const feedLink = document.createElement('a');
-    feedLink.href = '/api/feed';
-    feedLink.className = 'btn-text';
-    feedLink.style.marginRight = '1rem';
-    feedLink.textContent = 'Download Catalog CSV';
-    document.querySelector('.header-content').insertBefore(feedLink, ADD_BTN);
 
     FORM.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -157,8 +171,8 @@ function setupEventListeners() {
             availability: formData.get('availability'),
             image_link: formData.get('image_link'),
             condition: 'new', // Auto-populated
-            brand: 'My Shop', // Auto-populated
-            link: window.location.origin + '?id=' + (formData.get('id') || Date.now().toString()) // Auto-populated
+            brand: 'pitzuchia', // Consistent with original CSV
+            link: window.location.origin + '/?id=' + (formData.get('id') || Date.now().toString())
         };
         
         await saveProduct(product);
