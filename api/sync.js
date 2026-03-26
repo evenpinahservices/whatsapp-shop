@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         });
 
         await put('products.json', JSON.stringify(products), {
-            access: 'public',
+            access: 'private',
             addRandomSuffix: false,
             allowOverwrite: true
         });

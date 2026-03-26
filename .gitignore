@@ -3,6 +3,22 @@ node_modules
 dist
 .env
 .vercel
-
-.vercel
 .env*.local
+
+# Media files
+catalogue images/
+public/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.mp4
+*.mov
+
+# Scripts
+*.py
+image_names.txt
+test_upload.py
+upload_images.py
+convert_to_facebook.py
